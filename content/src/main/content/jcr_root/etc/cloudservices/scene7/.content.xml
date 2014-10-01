@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:designPath="/etc/design/cloudservices"
+        cq:lastModified="{Date}2011-10-17T15:30:19.911+02:00"
+        cq:lastModifiedBy="admin"
+        cq:template="/libs/cq/cloudserviceconfigs/templates/servicepage"
+        jcr:description="Deliver Dynamic Media"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Adobe Scene7"
+        sling:resourceType="cq/cloudserviceconfigs/components/servicepage"
+        connectedWhen="companyname"
+        description="Adobe® Scene7® is the industry-leading cross media platform that helps online marketers scale and deliver rich content to all customer touch points — web, print, email, video, mobile devices, social and interactive displays."
+        descriptionExtended="With Adobe Scene7, you can grow overall revenues by lifting conversion and average order values, reduce media production, management and publishing time and costs. You can build brand loyalty and repeat business by delivering consistent, rich user experiences optimized for all channels. Adobe Scene7 is part of the Adobe Digital Marketing Suite of applications for online business optimization."
+        ranking="10"
+        serviceAdminUrl="https://my.omniture.com"
+        serviceUrl="https://www1.scene7.com/registration/s7datasheet.asp?id=70180000000gIP0&amp;src=OBU_S7_datasheet"
+        showOnDashboard="{Boolean}true"
+        summaryPanelPath="/libs/dam/components/scene7/scene7page/panel"
+        thumbnailPath="/libs/dam/templates/scene7/thumbnail.png"
+        visible="{Boolean}false"/>
+    <statistics jcr:primaryType="nt:unstructured">
+        <assets
+            jcr:primaryType="nt:unstructured"
+            jcr:title="Assets"
+            total="{Long}0"/>
+    </statistics>
+    <mys7config/>
+</jcr:root>

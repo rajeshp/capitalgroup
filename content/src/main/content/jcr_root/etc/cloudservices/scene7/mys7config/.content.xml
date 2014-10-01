@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:designPath="/etc/designs/cloudservices/scene7"
+        cq:lastModified="{Date}2014-09-30T00:55:21.839-07:00"
+        cq:lastModifiedBy="admin"
+        cq:template="/libs/dam/templates/scene7"
+        jcr:lastModified="{Date}2014-09-30T00:55:21.024-07:00"
+        jcr:lastModifiedBy="admin"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="mys7config"
+        sling:resourceType="dam/components/scene7/scene7page"
+        companyHandle="c|5179"
+        companyname="OmniPS"
+        email="prajesh@adobe.com"
+        password="\{bb791bb9c5451fa38ec0283b195da10d0d9aee2d9a602e35e5eeadfb2bb30cd4}"
+        path="/etc/cloudservices/scene7/mys7config/jcr:content"
+        region="europe"
+        rootPath="OmniPS/Rajesh/"
+        userHandle="u|32061|prajesh@adobe.com"/>
+</jcr:root>
