@@ -62,10 +62,23 @@
                     if(!"PublishComplete".equals(publishStatus))               
                         uploadText = i18n.get("Check Scene7 Publish Status", "Check Publish Status link text");
 
+
+//check if thumbnail is generated automatically, else show default audio file icon
+
+String thumbnailPath =null;
+
+
+if(resourceResolver.resolve(thumbnailPath)!=null)
+    //thumbnailPath = fileReference + "/jcr:content/renditions/cq5dam.thumbnail.48.48.png";
+    thumbnailPath = "/content/dam/CapitalGroup/audio-file-icon.png/jcr:content/renditions/cq5dam.thumbnail.48.48.png";
+else
+    thumbnailPath = "/content/dam/CapitalGroup/audio-file-icon.png/jcr:content/renditions/cq5dam.thumbnail.48.48.png";
+
+
                 %>
                 <div class="not-published" style="position:relative;width: <%= width %>px; height: <%= height %>px;">
-                    <img src="<%= fileReference %>/jcr:content/renditions/cq5dam.thumbnail.48.48.png"/>
-                    <div class="overlay" style="width: <%= width %>px; height: <%= height %>px;"></div>
+                    <img src="<%= thumbnailPath %>"/>
+                    <div class="overlay" style="width: <%= width %>px; height: 20px;"></div>
                     <div style="width: <%= width %>px; height: <%= height %>px;">
                         <a class="publish-button" id="<%=resource.getPath().replace("/", "-")%>-publishLink" onclick="CQ.scene7.triggerWorkflowFromViewer('<%=resource.getPath().replace("/", "-")%>', '<%=fileReference%>');return false;"><%=uploadText %></a>
                     </div>
@@ -80,13 +93,15 @@
                 //embed
 //Object md = asset.getMetadata();
 //System.out.println("md:" + md);
-                String assetValue = asset.getMetadataValue("dam:scene7Folder")+"/"+asset.getMetadataValue("dam:scene7Name");
+                String assetValue = asset.getMetadataValue("dam:scene7Folder")+"/";
                 
                 // Had problems with using reg exp in context of CQ component - so trying this instead...
                 int idx = assetValue.lastIndexOf(".");
                 boolean found = (idx == assetValue.length()-4);
                 if (!found) {
-                    assetValue += ".mp3"; // Assume mp4 if no extension found
+                    //assetValue += ".mp3"; // Assume mp4 if no extension found
+
+                    assetValue += asset.getMetadataValue("dam:scene7UploadFileName");
                 }
                 
                 String company = assetValue.split("/")[0];
@@ -94,7 +109,7 @@
                 String directUrl = asset.getMetadataValue("dam:scene7Domain") + "is/content/" + assetValue;
                 %>
 <%
-out.println(directUrl);
+//out.println(directUrl);
 
 
 %>
