@@ -1,0 +1,97 @@
+var workflowData = workItem.getWorkflowData();
+
+if (workflowData.getPayloadType() == "JCR_PATH") {        
+        try {
+            /* Init */
+            var cfgMgr = sling.getService(Packages.com.day.cq.wcm.webservicesupport.ConfigurationManager);
+            var config = null;
+            
+            log.info("Config manager ="+cfgMgr);
+            
+            if (cfgMgr != null) {
+                var processArgs = metaData.get("PROCESS_ARGS");
+                
+                log.info("process args = "+processArgs);
+                
+                var processPath = processArgs.split("cq:cloudserviceconfig=");
+                
+                log.info("process Path = "+ processPath);
+                
+                for(i=0;i<processPath.length;i++)
+                    log.info("*******************"+processPath[i]);
+                
+                var cfgPath = processPath[0];
+                
+                log.info("cfgpath = "+cfgPath);
+                
+                config = cfgMgr.getConfiguration(cfgPath);
+            }
+            
+            if (config != null) {
+                /* Get configuration */
+                var email = config.getInherited('email', '');
+                var password = config.getInherited('password', '');
+                var region = config.getInherited('region', '');
+                var userHandle = config.getInherited('userHandle', '');
+                var companyHandle = config.getInherited('companyHandle', '');
+                var rootPath = config.getInherited('rootPath', '');
+                
+                /* validate data */
+                if (email && email != "" &&
+                        password && password != "" &&
+                        region && region != "" &&
+                        userHandle && userHandle != "" &&
+                        companyHandle && companyHandle != "" &&
+                        rootPath && rootPath != "") {
+                   
+                    var path = workflowData.getPayload().toString();  
+                         
+                    var scene7 = sling.getService(Packages.com.adobe.ReprocessJobAVSCreation.TriggerScene7AssetSetService);
+                    
+                    var jcrsession = workflowSession.getSession();
+                    var node = jcrsession.getNode(path+"/jcr:content/metadata");
+                    
+                    
+                    var assetType = null;
+                    
+                    log.info("*A*******$$$$$$$$$$$$ TriggerScene7ECMA");
+                    
+                    if (node.hasProperty("dc:format")){
+                           assetType = node.getProperty("dc:format",null);
+                           log.info("***********************************************Asset Type of workflow Asset is : "+assetType);
+                       }
+                    
+                    
+                    
+                    if (scene7 != null&&assetType!=null && assetType=="video/mp4") {
+                        //unprotect password
+                        var cryptoSupport = sling.getService(Packages.com.adobe.granite.crypto.CryptoSupport);
+                        if (cryptoSupport && cryptoSupport.isProtected(password)) {
+                            password = cryptoSupport.unprotect(password);
+                        }
+                        
+                        var result = scene7.triggerAssetSetCreation(path, email, password, region, userHandle, companyHandle, rootPath, resource.getResourceResolver());
+                        if (result == "success") {
+                            log.info("file " + path + " Asset Set Creation completed successfully to scene7");
+                        } else {
+                            log.error(result);
+                        }
+                        
+                    }
+                else {
+                    if(assetType!=null && assetType!="video/mp4"){
+                            log.warn("Asset Set creation to scene7 not executed because assetType is : "+assetType);
+                        }
+                    else{
+                        log.warn("Asset Set Creation to Scene7 not executed due to missing parameters");
+                        }
+                    }
+                }
+        
+            } else {
+                log.warn("Configuration could not be found");
+            }
+        } catch(err) {
+            log.error("Asset Set Creation to Scene7 failed " + ((err) ? err : ""));
+        }
+}
