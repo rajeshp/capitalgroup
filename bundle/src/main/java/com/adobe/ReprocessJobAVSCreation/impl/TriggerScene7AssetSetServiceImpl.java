@@ -61,18 +61,32 @@ public class TriggerScene7AssetSetServiceImpl extends Scene7APIClient implements
 		HttpClient client = new HttpClient();
 
 		Node jcrContent = resolver.getResource(path + "/jcr:content/metadata").adaptTo(Node.class);
-	
+
+        long thumbnailTimeInMillis=0;
+
+
+
 		String result = "failed";
 
 		try {
+
+            if(jcrContent.hasProperty("thumbnailTime"))
+            {
+                log.info("Thumbnail Time in String : "+ jcrContent.getProperty("thumbnailTime").getString());
+                thumbnailTimeInMillis =  Integer.parseInt(jcrContent.getProperty("thumbnailTime").getString()) * 1000;
+            }
+
+
 			String reprocessFilename = getReprocessFilename(path,resolver,jcrContent);
 	        String reprocessJobname = "Reprocess_"+reprocessFilename;
 	        
 	        String publishStatus = waitOnPublishComplete( path,resolver,jcrContent);
+
+            log.info("********Reprocess Publish status = "+publishStatus);
 	        
 	        if( "success".equalsIgnoreCase(publishStatus)){
 	        	String assetHandle = getAssetHandle(path,resolver,jcrContent);
-		        result = submitReprocessJob(email, password, region, companyHandle, reprocessJobname, userHandle, assetHandle);	
+		        result = submitReprocessJob(email, password, region, companyHandle, reprocessJobname, userHandle, assetHandle, thumbnailTimeInMillis);
 	        }
 	    
 		}catch (Exception e) {
@@ -124,7 +138,7 @@ public class TriggerScene7AssetSetServiceImpl extends Scene7APIClient implements
         return assetId;
 	}
 
-	private String submitReprocessJob( String email, String password, String region, String companyHandle, String jobName, String userHandle, String assetHandle) {
+	private String submitReprocessJob( String email, String password, String region, String companyHandle, String jobName, String userHandle, String assetHandle, long thumbnailTimeInMillis) {
 		HttpClient client = new HttpClient();
 		String appSettingsTypeHandle = getApplicationPropertyHandle( email, password, region);
 		if (appSettingsTypeHandle == null) {
@@ -132,6 +146,9 @@ public class TriggerScene7AssetSetServiceImpl extends Scene7APIClient implements
 		}
 		
 		try {
+
+            log.info("*********ThumbnailTimeInMillis = "+thumbnailTimeInMillis);
+
 			PostMethod request = new PostMethod(domains.get(region + SPS) + "/scene7/services/IpsApiService");
 			request.addRequestHeader("SOAPAction", "submitJob");
 			RequestEntity entity = new StringRequestEntity(getRequestBody("submitJob", email, password,
@@ -188,7 +205,7 @@ public class TriggerScene7AssetSetServiceImpl extends Scene7APIClient implements
 				        "<items>ps|2521984</items>" +
 				        "<items>ps|2522970</items>" +
 				      "</videoEncodingPresetsArray>" +
-				    " <thumbnailOptions> <thumbnailTime>44000</thumbnailTime> </thumbnailOptions>  </mediaOptions>" +
+				    " <thumbnailOptions> <thumbnailTime>"+thumbnailTimeInMillis+"</thumbnailTime> </thumbnailOptions>  </mediaOptions>" +
 				    "<emailSetting>All</emailSetting>" +
 				    "<excludeMasterVideoFromAVS>true</excludeMasterVideoFromAVS>"+
 				  "</reprocessAssetsJob>"
